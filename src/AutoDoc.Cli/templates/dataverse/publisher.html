@@ -1,0 +1,50 @@
+{{- include 'shared/_header' -}}
+
+<div class="report-header">
+  <h1>Publisher</h1>
+  <h2>{{ friendly_name }}</h2>
+  {{- if description }}<p class="subtitle">{{ description }}</p>{{- end }}
+</div>
+
+<div class="section">
+  <div class="section-title">Identification</div>
+  <table class="detail-table">
+    <tr><th>Publisher ID</th><td>{{ publisher_id }}</td></tr>
+    <tr><th>Unique Name</th><td>{{ unique_name }}</td></tr>
+    <tr><th>Friendly Name</th><td class="text">{{ friendly_name }}</td></tr>
+    <tr><th>Read-only</th><td>
+      {{- if is_readonly }}<span class="tag">Read-only</span>
+      {{- else }}<span class="tag unmanaged">Editable</span>{{- end }}
+    </td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">Customization</div>
+  <table class="detail-table">
+    <tr><th>Prefix</th><td>{{ customization_prefix ?? "<span class='null-value'>—</span>" }}</td></tr>
+    <tr><th>Option Value Prefix</th><td>{{ customization_option_value_prefix ?? "<span class='null-value'>—</span>" }}</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">Contact</div>
+  <table class="detail-table">
+    <tr><th>Email</th><td>{{ e_mail_address ?? "<span class='null-value'>—</span>" }}</td></tr>
+    <tr><th>Website</th><td>
+      {{- if supporting_website_url }}
+        <a href="{{ supporting_website_url }}" target="_blank">{{ supporting_website_url }}</a>
+      {{- else }}<span class="null-value">—</span>
+      {{- end }}
+    </td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">Timestamps</div>
+  <table class="detail-table">
+    <tr><th>Modified On</th><td>{{ modified_on ?? "<span class='null-value'>—</span>" }}</td></tr>
+  </table>
+</div>
+
+{{- include 'shared/_footer' -}}

@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AutoDoc.Cli/AutoDoc.Cli.csproj" />
+    <Project Path="src/AutoDoc.Collectors/AutoDoc.Collectors.csproj" />
+    <Project Path="src/AutoDoc.Core/AutoDoc.Core.csproj" />
+    <Project Path="src/AutoDoc.Infrastructure/AutoDoc.Infrastructure.csproj" />
+    <Project Path="src/AutoDoc.Renderers/AutoDoc.Renderers.csproj" />
+  </Folder>
+</Solution>

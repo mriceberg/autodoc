@@ -1,0 +1,48 @@
+{{- include 'shared/_header' -}}
+
+<div class="report-header">
+  <h1>Documentation</h1>
+  <h2>{{ environment_name }}</h2>
+  <p class="subtitle">{{ entries.size }} report(s) generated on {{ generated_at }}</p>
+</div>
+
+{{- # Group entries by ElementType
+    func group_entries(list)
+      groups = {}
+      for entry in list
+        key = entry.element_type
+        if !groups[key]
+          groups[key] = []
+        end
+        groups[key] = groups[key] | array.add entry
+      end
+      ret groups
+    end
+-}}
+
+{{- groups = {} -}}
+{{- for entry in entries -}}
+  {{- key = entry.element_type -}}
+  {{- if !groups[key] -}}{{- groups[key] = [] -}}{{- end -}}
+  {{- groups[key] = groups[key] | array.add entry -}}
+{{- end -}}
+
+{{- for group in groups -}}
+<div class="index-group">
+  <h2>{{ group.key }}</h2>
+  <ul class="entry-list">
+    {{- for entry in group.value }}
+    <li>
+      <a href="{{ entry.relative_path }}">
+        {{ entry.title }}
+        {{- if entry.description }}
+        <span class="description">— {{ entry.description }}</span>
+        {{- end }}
+      </a>
+    </li>
+    {{- end }}
+  </ul>
+</div>
+{{- end }}
+
+{{- include 'shared/_footer' -}}

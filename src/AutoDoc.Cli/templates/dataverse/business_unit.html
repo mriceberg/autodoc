@@ -1,0 +1,58 @@
+{{- include 'shared/_header' -}}
+
+<div class="report-header">
+  <h1>Business Unit</h1>
+  <h2>{{ name }}</h2>
+  {{- if description }}<p class="subtitle">{{ description }}</p>{{- end }}
+</div>
+
+<div class="section">
+  <div class="section-title">Identification</div>
+  <table class="detail-table">
+    <tr><th>Business Unit ID</th><td>{{ business_unit_id }}</td></tr>
+    <tr><th>Name</th><td class="text">{{ name }}</td></tr>
+    <tr><th>Root Unit</th><td>
+      {{- if is_root }}<span class="tag enabled">Root</span>
+      {{- else }}<span class="tag">Child</span>{{- end }}
+    </td></tr>
+    <tr><th>Status</th><td>
+      {{- if is_disabled }}<span class="tag disabled">Disabled</span>
+      {{- else }}<span class="tag enabled">Active</span>{{- end }}
+    </td></tr>
+  </table>
+</div>
+
+{{- if !is_root }}
+<div class="section">
+  <div class="section-title">Hierarchy</div>
+  <table class="detail-table">
+    <tr><th>Parent Business Unit ID</th><td>{{ parent_business_unit_id ?? "<span class='null-value'>—</span>" }}</td></tr>
+    <tr><th>Parent Name</th><td class="text">{{ parent_business_unit_name ?? "<span class='null-value'>—</span>" }}</td></tr>
+  </table>
+</div>
+{{- end }}
+
+<div class="section">
+  <div class="section-title">Contact</div>
+  <table class="detail-table">
+    <tr><th>Email</th><td>{{ email_address ?? "<span class='null-value'>—</span>" }}</td></tr>
+    <tr><th>Website</th><td>
+      {{- if website_url }}
+        <a href="{{ website_url }}" target="_blank">{{ website_url }}</a>
+      {{- else }}<span class="null-value">—</span>
+      {{- end }}
+    </td></tr>
+    <tr><th>City</th><td class="text">{{ address1_city ?? "<span class='null-value'>—</span>" }}</td></tr>
+    <tr><th>Country</th><td class="text">{{ address1_country ?? "<span class='null-value'>—</span>" }}</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">Timestamps</div>
+  <table class="detail-table">
+    <tr><th>Created On</th><td>{{ created_on ?? "<span class='null-value'>—</span>" }}</td></tr>
+    <tr><th>Modified On</th><td>{{ modified_on ?? "<span class='null-value'>—</span>" }}</td></tr>
+  </table>
+</div>
+
+{{- include 'shared/_footer' -}}

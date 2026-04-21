@@ -1,0 +1,26 @@
+# Build output
+bin/
+obj/
+out/
+
+# Generated documentation output
+output/
+
+# Secrets — NEVER commit this file
+secrets.json
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# .NET
+*.nupkg
+*.snupkg
+project.lock.json

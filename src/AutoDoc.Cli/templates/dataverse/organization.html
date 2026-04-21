@@ -1,0 +1,89 @@
+{{- include 'shared/_header' -}}
+
+<div class="report-header">
+  <h1>Organization</h1>
+  <h2>{{ name }}</h2>
+</div>
+
+<div class="section">
+  <div class="section-title">Identification</div>
+  <table class="detail-table">
+    <tr><th>Organization ID</th><td>{{ organization_id }}</td></tr>
+    <tr><th>Name</th><td class="text">{{ name }}</td></tr>
+    <tr><th>Version</th><td>{{ version ?? "<span class='null-value'>—</span>" }}</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">Localization</div>
+  <table class="detail-table">
+    <tr><th>Language Code</th><td>{{ language_code }}</td></tr>
+    <tr><th>Locale ID</th><td>{{ locale_id }}</td></tr>
+    <tr><th>Date Format</th><td>{{ date_format_string ?? "<span class='null-value'>—</span>" }}</td></tr>
+    <tr><th>Time Format</th><td>{{ time_format_string ?? "<span class='null-value'>—</span>" }}</td></tr>
+    <tr><th>Default Country Code</th><td>{{ default_country_code ?? "<span class='null-value'>—</span>" }}</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">Currency</div>
+  <table class="detail-table">
+    <tr><th>Base Currency Name</th><td class="text">{{ base_currency_name ?? "<span class='null-value'>—</span>" }}</td></tr>
+    <tr><th>Symbol</th><td>{{ base_currency_symbol ?? "<span class='null-value'>—</span>" }}</td></tr>
+    <tr><th>Code</th><td>{{ base_currency_code ?? "<span class='null-value'>—</span>" }}</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">Audit Settings</div>
+  <table class="detail-table">
+    {{- func bool_cell(val)
+      if val == true
+        ret "<span class='bool-true'>Enabled</span>"
+      else if val == false
+        ret "<span class='bool-false'>Disabled</span>"
+      else
+        ret "<span class='null-value'>—</span>"
+      end
+    end -}}
+    <tr><th>Audit Enabled</th><td>{{ bool_cell is_audit_enabled }}</td></tr>
+    <tr><th>User Access Audit</th><td>{{ bool_cell is_user_access_audit_enabled }}</td></tr>
+    <tr><th>Read Audit</th><td>{{ bool_cell is_read_audit_enabled }}</td></tr>
+    <tr><th>Retention Period (days)</th><td>{{ audit_retention_period_v2 ?? "<span class='null-value'>—</span>" }}</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">Features</div>
+  <table class="detail-table">
+    <tr><th>Mobile Offline</th><td>{{ bool_cell is_mobile_offline_enabled }}</td></tr>
+    <tr><th>Presence</th><td>{{ bool_cell is_presence_enabled }}</td></tr>
+    <tr><th>SOP Integration</th><td>{{ bool_cell is_s_o_p_integration_enabled }}</td></tr>
+    <tr><th>Auto Save</th><td>{{ bool_cell is_auto_save_enabled }}</td></tr>
+    <tr><th>Max Upload File Size (bytes)</th><td>{{ max_upload_file_size_in_bytes ?? "<span class='null-value'>—</span>" }}</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">Timestamps</div>
+  <table class="detail-table">
+    <tr><th>Created On</th><td>{{ created_on ?? "<span class='null-value'>—</span>" }}</td></tr>
+    <tr><th>Modified On</th><td>{{ modified_on ?? "<span class='null-value'>—</span>" }}</td></tr>
+  </table>
+</div>
+
+{{- if additional_settings && additional_settings.size > 0 }}
+<div class="section">
+  <div class="section-title">Additional Settings</div>
+  <table class="detail-table">
+    {{- for pair in additional_settings }}
+    <tr>
+      <th>{{ pair.key }}</th>
+      <td>{{ pair.value ?? "<span class='null-value'>null</span>" }}</td>
+    </tr>
+    {{- end }}
+  </table>
+</div>
+{{- end }}
+
+{{- include 'shared/_footer' -}}
