@@ -1,0 +1,36 @@
+{{-
+# Renders a LabelField as an inline translations table.
+# Usage: {{ include 'shared/_translations' label: my_label_field }}
+# Falls back to a plain string if no translations are available.
+-}}
+{{- if label && label.has_translations -}}
+<div class="label-field">
+  {{- if label.translations.size == 1 -}}
+  <span class="label-default">{{ label.translations[0].text }}</span>
+  {{- else -}}
+  <table class="translations-table">
+    <thead>
+      <tr>
+        <th class="col-locale">Locale</th>
+        <th class="col-translation">Translation</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{- for t in label.translations | array.sort "language_code" }}
+      <tr>
+        <td class="col-locale">
+          <span class="locale-code">{{ t.language_code }}</span>
+          <span class="locale-name">{{ t.language_name }}</span>
+        </td>
+        <td class="col-translation">{{ t.text }}</td>
+      </tr>
+      {{- end }}
+    </tbody>
+  </table>
+  {{- end }}
+</div>
+{{- else if label && label.default_text -}}
+<span class="label-default">{{ label.default_text }}</span>
+{{- else -}}
+<span class="null-value">—</span>
+{{- end -}}

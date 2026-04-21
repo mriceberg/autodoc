@@ -1,4 +1,5 @@
 using System.Text.Json;
+using AutoDoc.Core.Models;
 using AutoDoc.Infrastructure.Http;
 
 namespace AutoDoc.Collectors.Dataverse;
@@ -36,6 +37,45 @@ public abstract class DataverseCollectorBase
         el.TryGetProperty(prop, out var v) && v.ValueKind != JsonValueKind.Null
             ? v.GetDateTimeOffset()
             : null;
+
+    /// <summary>
+    /// Parses a Dataverse Label object (as returned by the metadata API) into a LabelField.
+    /// Expected JSON shape:
+    /// { "LocalizedLabels": [{ "Label": "...", "LanguageCode": 1033 }, ...],
+    ///   "UserLocalizedLabel": { "Label": "...", "LanguageCode": 1033 } }
+    /// </summary>
+    protected static LabelField ParseLabel(JsonElement el, string prop)
+    {
+        if (!el.TryGetProperty(prop, out var labelEl) || labelEl.ValueKind != JsonValueKind.Object)
+            return LabelField.Empty;
+
+        string? defaultText = null;
+        if (labelEl.TryGetProperty("UserLocalizedLabel", out var userLabel)
+            && userLabel.ValueKind == JsonValueKind.Object)
+            defaultText = S(userLabel, "Label");
+
+        var translations = new List<LocalizedLabel>();
+        if (labelEl.TryGetProperty("LocalizedLabels", out var localizedArray)
+            && localizedArray.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in localizedArray.EnumerateArray())
+            {
+                var text = S(item, "Label");
+                var code = I(item, "LanguageCode");
+                if (text is not null && code is not null)
+                    translations.Add(new LocalizedLabel { LanguageCode = code.Value, Text = text });
+            }
+        }
+
+        // Sort by language code for consistent display order
+        translations.Sort((a, b) => a.LanguageCode.CompareTo(b.LanguageCode));
+
+        return new LabelField
+        {
+            DefaultText  = defaultText ?? translations.FirstOrDefault()?.Text,
+            Translations = translations
+        };
+    }
 
     /// <summary>
     /// Collects all string-valued properties from the element into a dictionary,

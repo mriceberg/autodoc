@@ -220,6 +220,62 @@ body {
   margin-top: 48px;
 }
 
+/* ── Translations table ──────────────────────────────── */
+.label-field { font-family: var(--font-sans); }
+
+.label-default { font-family: var(--font-sans); }
+
+.translations-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.translations-table thead th {
+  padding: 6px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--color-muted);
+  border-bottom: 1px solid var(--color-border);
+  background: #fafafa;
+}
+
+.translations-table tbody tr:last-child td { border-bottom: none; }
+
+.translations-table tbody td {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.translations-table .col-locale {
+  width: 220px;
+  white-space: nowrap;
+}
+
+.translations-table .col-translation {
+  font-family: var(--font-sans);
+}
+
+.locale-code {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--color-tag-bg);
+  color: var(--color-tag-text);
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-right: 6px;
+}
+
+.locale-name {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
 /* ── Utility ─────────────────────────────────────────── */
 .null-value { color: var(--color-muted); font-style: italic; font-family: var(--font-sans); }
 .bool-true  { color: #065f46; }
