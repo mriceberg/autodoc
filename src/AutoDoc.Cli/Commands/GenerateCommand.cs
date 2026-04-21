@@ -36,24 +36,34 @@ public static class GenerateCommand
             getDefaultValue: () => "./secrets.json",
             description: "Path to secrets.json");
 
+        var languageOption = new Option<int>(
+            name: "--language",
+            getDefaultValue: () => 0,
+            description: "LCID of the language to use for field labels (e.g. 1033 for English, " +
+                         "1036 for French). Defaults to 0 which uses the Dataverse default label.");
+        languageOption.AddAlias("-l");
+
         var cmd = new Command("generate", "Generate documentation for a Power Platform environment");
         cmd.AddOption(envOption);
         cmd.AddOption(formatOption);
         cmd.AddOption(outputOption);
         cmd.AddOption(secretsOption);
+        cmd.AddOption(languageOption);
 
-        cmd.SetHandler(async (env, format, output, secretsPath) =>
+        cmd.SetHandler(async (env, format, output, secretsPath, language) =>
         {
-            await RunAsync(env, format, output, secretsPath);
-        }, envOption, formatOption, outputOption, secretsOption);
+            await RunAsync(env, format, output, secretsPath, language);
+        }, envOption, formatOption, outputOption, secretsOption, languageOption);
 
         return cmd;
     }
 
     private static async Task RunAsync(
-        string environmentName, string format, string outputDir, string secretsPath)
+        string environmentName, string format, string outputDir, string secretsPath, int languageCode)
     {
         Console.WriteLine($"AutoDoc — generating documentation for environment: {environmentName}");
+        if (languageCode > 0)
+            Console.WriteLine($"  Language: {languageCode}");
 
         // Load secrets
         var secrets = LocalSecretsLoader.Load(secretsPath);
@@ -85,7 +95,8 @@ public static class GenerateCommand
         var baseContext = new RenderContext
         {
             EnvironmentName = environmentName,
-            GeneratedAt     = DateTime.UtcNow
+            GeneratedAt     = DateTime.UtcNow,
+            LanguageCode    = languageCode
         };
 
         var reportEntries = new List<ReportEntry>();

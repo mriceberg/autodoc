@@ -1,6 +1,6 @@
 namespace AutoDoc.Core.Models.Dataverse;
 
-public record SolutionModel
+public record SolutionModel : IHasLabels
 {
     public Guid SolutionId { get; init; }
     public string UniqueName { get; init; } = string.Empty;
@@ -17,4 +17,7 @@ public record SolutionModel
 
     public DateTimeOffset? InstalledOn { get; init; }
     public DateTimeOffset? ModifiedOn { get; init; }
+
+    public IReadOnlyDictionary<string, LabelField> Labels { get; init; } =
+        new Dictionary<string, LabelField>(StringComparer.OrdinalIgnoreCase);
 }

@@ -17,20 +17,23 @@ public class PublisherCollector : DataverseCollectorBase, ICollector<PublisherMo
 
     public async Task<IReadOnlyList<PublisherModel>> FetchAsync(CancellationToken ct = default)
     {
-        var items = await Client.GetCollectionAsync(Query, ct);
+        var labelsTask = FetchAttributeLabelsAsync("publisher", ct);
+        var items  = await Client.GetCollectionAsync(Query, ct);
+        var labels = await labelsTask;
 
         return items.Select(el => new PublisherModel
         {
-            PublisherId                      = G(el, "publisherid") ?? Guid.Empty,
-            UniqueName                       = S(el, "uniquename") ?? string.Empty,
-            FriendlyName                     = S(el, "friendlyname") ?? string.Empty,
-            Description                      = S(el, "description"),
-            CustomizationPrefix              = S(el, "customizationprefix"),
-            CustomizationOptionValuePrefix   = I(el, "customizationoptionvalueprefix"),
-            SupportingWebsiteUrl             = S(el, "supportingwebsiteurl"),
-            EMailAddress                     = S(el, "emailaddress"),
-            IsReadonly                       = B(el, "isreadonly") ?? false,
-            ModifiedOn                       = D(el, "modifiedon")
+            PublisherId                    = G(el, "publisherid") ?? Guid.Empty,
+            UniqueName                     = S(el, "uniquename") ?? string.Empty,
+            FriendlyName                   = S(el, "friendlyname") ?? string.Empty,
+            Description                    = S(el, "description"),
+            CustomizationPrefix            = S(el, "customizationprefix"),
+            CustomizationOptionValuePrefix = I(el, "customizationoptionvalueprefix"),
+            SupportingWebsiteUrl           = S(el, "supportingwebsiteurl"),
+            EMailAddress                   = S(el, "emailaddress"),
+            IsReadonly                     = B(el, "isreadonly") ?? false,
+            ModifiedOn                     = D(el, "modifiedon"),
+            Labels                         = labels
         }).ToList();
     }
 }

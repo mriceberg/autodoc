@@ -31,19 +31,21 @@ public class OrganizationCollector : DataverseCollectorBase, ICollector<Organiza
 
     public async Task<IReadOnlyList<OrganizationModel>> FetchAsync(CancellationToken ct = default)
     {
-        var items = await Client.GetCollectionAsync(Query, ct);
+        var labelsTask = FetchAttributeLabelsAsync("organization", ct);
+        var items  = await Client.GetCollectionAsync(Query, ct);
+        var labels = await labelsTask;
 
         return items.Select(el => new OrganizationModel
         {
-            OrganizationId      = G(el, "organizationid") ?? Guid.Empty,
-            Name                = S(el, "name") ?? string.Empty,
-            LanguageCode        = I(el, "languagecode") ?? 0,
-            LocaleId            = I(el, "localeid") ?? 0,
-            DateFormatString    = S(el, "dateformatstring"),
-            TimeFormatString    = S(el, "timeformatstring"),
-            DefaultCountryCode  = S(el, "defaultcountrycode"),
-            BaseCurrencySymbol  = S(el, "basecurrencysymbol"),
-            BaseCurrencyCode    = S(el, "currencyformatcode"),
+            OrganizationId              = G(el, "organizationid") ?? Guid.Empty,
+            Name                        = S(el, "name") ?? string.Empty,
+            LanguageCode                = I(el, "languagecode") ?? 0,
+            LocaleId                    = I(el, "localeid") ?? 0,
+            DateFormatString            = S(el, "dateformatstring"),
+            TimeFormatString            = S(el, "timeformatstring"),
+            DefaultCountryCode          = S(el, "defaultcountrycode"),
+            BaseCurrencySymbol          = S(el, "basecurrencysymbol"),
+            BaseCurrencyCode            = S(el, "currencyformatcode"),
             IsAuditEnabled              = B(el, "isauditenabled"),
             IsUserAccessAuditEnabled    = B(el, "isuseraccessauditenabled"),
             IsReadAuditEnabled          = B(el, "isreadauditenabled"),
@@ -56,7 +58,8 @@ public class OrganizationCollector : DataverseCollectorBase, ICollector<Organiza
             Version                     = S(el, "version"),
             CreatedOn                   = D(el, "createdon"),
             ModifiedOn                  = D(el, "modifiedon"),
-            AdditionalSettings          = AdditionalProperties(el, MappedFields)
+            AdditionalSettings          = AdditionalProperties(el, MappedFields),
+            Labels                      = labels
         }).ToList();
     }
 }

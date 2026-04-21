@@ -1,6 +1,6 @@
 namespace AutoDoc.Core.Models.Dataverse;
 
-public record OrganizationModel
+public record OrganizationModel : IHasLabels
 {
     public Guid OrganizationId { get; init; }
     public string Name { get; init; } = string.Empty;
@@ -43,4 +43,7 @@ public record OrganizationModel
 
     // All remaining settings captured as-is from the API
     public Dictionary<string, string?> AdditionalSettings { get; init; } = [];
+
+    public IReadOnlyDictionary<string, LabelField> Labels { get; init; } =
+        new Dictionary<string, LabelField>(StringComparer.OrdinalIgnoreCase);
 }

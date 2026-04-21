@@ -78,6 +78,29 @@ public abstract class DataverseCollectorBase
     }
 
     /// <summary>
+    /// Fetches DisplayName labels for all attributes of an entity from the metadata API
+    /// and returns them keyed by logical name (lowercase).
+    /// </summary>
+    protected async Task<IReadOnlyDictionary<string, LabelField>> FetchAttributeLabelsAsync(
+        string entityLogicalName, CancellationToken ct = default)
+    {
+        var url = $"EntityDefinitions(LogicalName='{entityLogicalName}')/Attributes" +
+                  "?$select=LogicalName,DisplayName";
+
+        var items = await Client.GetCollectionAsync(url, ct);
+        var labels = new Dictionary<string, LabelField>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var item in items)
+        {
+            var logicalName = S(item, "LogicalName");
+            if (logicalName is null) continue;
+            labels[logicalName] = ParseLabel(item, "DisplayName");
+        }
+
+        return labels;
+    }
+
+    /// <summary>
     /// Collects all string-valued properties from the element into a dictionary,
     /// excluding the ones already explicitly mapped (to avoid duplication).
     /// </summary>

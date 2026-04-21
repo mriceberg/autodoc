@@ -9,15 +9,15 @@
 <div class="section">
   <div class="section-title">Identification</div>
   <table class="detail-table">
-    <tr><th>Solution ID</th><td>{{ solution_id }}</td></tr>
-    <tr><th>Unique Name</th><td>{{ unique_name }}</td></tr>
-    <tr><th>Friendly Name</th><td class="text">{{ friendly_name }}</td></tr>
-    <tr><th>Version</th><td>{{ version }}</td></tr>
-    <tr><th>Type</th><td>
+    <tr><th>{{ labels["solutionid"] }}</th><td>{{ solution_id }}</td></tr>
+    <tr><th>{{ labels["uniquename"] }}</th><td>{{ unique_name }}</td></tr>
+    <tr><th>{{ labels["friendlyname"] }}</th><td class="text">{{ friendly_name }}</td></tr>
+    <tr><th>{{ labels["version"] }}</th><td>{{ version }}</td></tr>
+    <tr><th>{{ labels["ismanaged"] }}</th><td>
       {{- if is_managed }}<span class="tag managed">Managed</span>
       {{- else }}<span class="tag unmanaged">Unmanaged</span>{{- end }}
     </td></tr>
-    <tr><th>Visible</th><td>
+    <tr><th>{{ labels["isvisible"] }}</th><td>
       {{- if is_visible }}<span class="tag enabled">Visible</span>
       {{- else }}<span class="tag disabled">Hidden</span>{{- end }}
     </td></tr>
@@ -27,17 +27,17 @@
 <div class="section">
   <div class="section-title">Publisher</div>
   <table class="detail-table">
-    <tr><th>Publisher ID</th><td>{{ publisher_id ?? "<span class='null-value'>—</span>" }}</td></tr>
+    <tr><th>{{ labels["publisherid"] ?? "Publisher ID" }}</th><td>{{ publisher_id ?? "<span class='null-value'>—</span>" }}</td></tr>
     <tr><th>Publisher Name</th><td class="text">{{ publisher_name ?? "<span class='null-value'>—</span>" }}</td></tr>
-    <tr><th>Prefix</th><td>{{ publisher_prefix ?? "<span class='null-value'>—</span>" }}</td></tr>
+    <tr><th>{{ labels["customizationprefix"] ?? "Prefix" }}</th><td>{{ publisher_prefix ?? "<span class='null-value'>—</span>" }}</td></tr>
   </table>
 </div>
 
 <div class="section">
   <div class="section-title">Timestamps</div>
   <table class="detail-table">
-    <tr><th>Installed On</th><td>{{ installed_on ?? "<span class='null-value'>—</span>" }}</td></tr>
-    <tr><th>Modified On</th><td>{{ modified_on ?? "<span class='null-value'>—</span>" }}</td></tr>
+    <tr><th>{{ labels["installedon"] }}</th><td>{{ installed_on ?? "<span class='null-value'>—</span>" }}</td></tr>
+    <tr><th>{{ labels["modifiedon"] }}</th><td>{{ modified_on ?? "<span class='null-value'>—</span>" }}</td></tr>
   </table>
 </div>
 

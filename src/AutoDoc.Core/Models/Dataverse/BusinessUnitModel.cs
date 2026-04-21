@@ -1,6 +1,6 @@
 namespace AutoDoc.Core.Models.Dataverse;
 
-public record BusinessUnitModel
+public record BusinessUnitModel : IHasLabels
 {
     public Guid BusinessUnitId { get; init; }
     public string Name { get; init; } = string.Empty;
@@ -21,4 +21,7 @@ public record BusinessUnitModel
     public bool IsDisabled { get; init; }
     public DateTimeOffset? CreatedOn { get; init; }
     public DateTimeOffset? ModifiedOn { get; init; }
+
+    public IReadOnlyDictionary<string, LabelField> Labels { get; init; } =
+        new Dictionary<string, LabelField>(StringComparer.OrdinalIgnoreCase);
 }

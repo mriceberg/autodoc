@@ -16,6 +16,13 @@ public record LabelField
 
     public bool HasTranslations => Translations.Count > 0;
 
+    /// <summary>
+    /// Returns the text for the requested LCID, falling back to DefaultText if not found.
+    /// </summary>
+    public string? GetText(int languageCode) =>
+        Translations.FirstOrDefault(t => t.LanguageCode == languageCode)?.Text
+        ?? DefaultText;
+
     public static LabelField Empty => new();
 }
 

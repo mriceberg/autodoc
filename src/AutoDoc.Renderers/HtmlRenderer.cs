@@ -1,3 +1,4 @@
+using AutoDoc.Core.Models;
 using AutoDoc.Core.Renderers;
 using Microsoft.Extensions.Options;
 using Scriban;
@@ -64,6 +65,12 @@ public class HtmlRenderer : IRenderer
         scriptObject["relative_path_to_root"] = context.RelativePathToRoot;
         scriptObject["generated_at"]          = context.GeneratedAt.ToString("yyyy-MM-dd HH:mm") + " UTC";
         scriptObject["breadcrumbs"]           = context.Breadcrumbs;
+        scriptObject["language_code"]         = context.LanguageCode;
+
+        // Resolve localizable labels for the requested language and inject as a flat
+        // Dictionary<string, string> so templates can simply write {{ labels["fieldname"] }}.
+        if (model is IHasLabels hasLabels)
+            scriptObject["labels"] = ResolveLabels(hasLabels, context.LanguageCode);
 
         var templateContext = new TemplateContext
         {
@@ -73,6 +80,26 @@ public class HtmlRenderer : IRenderer
         templateContext.PushGlobal(scriptObject);
 
         return await template.RenderAsync(templateContext);
+    }
+
+    private static Dictionary<string, string> ResolveLabels(IHasLabels model, int languageCode)
+    {
+        var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var (key, label) in model.Labels)
+        {
+            var text = languageCode > 0
+                ? label.GetText(languageCode) ?? label.DefaultText
+                : label.DefaultText;
+            result[key] = text ?? FormatLogicalName(key);
+        }
+        return result;
+    }
+
+    /// Converts "organizationid" → "Organization Id" as a last-resort fallback.
+    private static string FormatLogicalName(string logicalName)
+    {
+        if (string.IsNullOrEmpty(logicalName)) return logicalName;
+        return char.ToUpperInvariant(logicalName[0]) + logicalName[1..];
     }
 
     private async Task CopySharedAssetsAsync(string outputDir, CancellationToken ct)

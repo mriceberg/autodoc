@@ -17,7 +17,9 @@ public class SolutionCollector : DataverseCollectorBase, ICollector<SolutionMode
 
     public async Task<IReadOnlyList<SolutionModel>> FetchAsync(CancellationToken ct = default)
     {
-        var items = await Client.GetCollectionAsync(Query, ct);
+        var labelsTask = FetchAttributeLabelsAsync("solution", ct);
+        var items  = await Client.GetCollectionAsync(Query, ct);
+        var labels = await labelsTask;
 
         return items.Select(el =>
         {
@@ -37,7 +39,8 @@ public class SolutionCollector : DataverseCollectorBase, ICollector<SolutionMode
                 PublisherName   = pubKind == System.Text.Json.JsonValueKind.Object ? S(pub, "friendlyname") : null,
                 PublisherPrefix = pubKind == System.Text.Json.JsonValueKind.Object ? S(pub, "customizationprefix") : null,
                 InstalledOn     = D(el, "installedon"),
-                ModifiedOn      = D(el, "modifiedon")
+                ModifiedOn      = D(el, "modifiedon"),
+                Labels          = labels
             };
         }).ToList();
     }
