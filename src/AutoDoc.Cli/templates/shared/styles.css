@@ -20,6 +20,11 @@
   --font-mono:        "Cascadia Code", "Consolas", monospace;
   --radius:           6px;
   --shadow:           0 1px 3px rgba(0,0,0,.10), 0 1px 2px rgba(0,0,0,.06);
+
+  /* Layout heights — used by both screen and print rules */
+  --header-h:     52px;
+  --breadcrumb-h: 37px;
+  --footer-h:     40px;
 }
 
 body {
@@ -35,14 +40,28 @@ body {
   background: var(--color-primary);
   color: #fff;
   padding: 0 24px;
-  height: 52px;
+  height: var(--header-h);
   display: flex;
   align-items: center;
-  gap: 16px;
-  position: sticky;
+  justify-content: space-between;
+  position: fixed;
   top: 0;
-  z-index: 100;
+  left: 0;
+  right: 0;
+  z-index: 200;
   box-shadow: 0 2px 4px rgba(0,0,0,.15);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .site-header .logo {
@@ -52,6 +71,20 @@ body {
   color: #fff;
   text-decoration: none;
   letter-spacing: -.3px;
+  white-space: nowrap;
+}
+
+.site-header .report-type-badge {
+  font-family: var(--font-title);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  color: rgba(255,255,255,.90);
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 4px;
+  padding: 3px 9px;
 }
 
 .site-header .environment-badge {
@@ -60,6 +93,7 @@ body {
   border-radius: 20px;
   padding: 2px 10px;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 /* ── Breadcrumb ──────────────────────────────────────── */
@@ -67,11 +101,17 @@ body {
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   padding: 8px 24px;
+  height: var(--breadcrumb-h);
   font-size: 12px;
   color: var(--color-muted);
   display: flex;
   gap: 6px;
   align-items: center;
+  position: fixed;
+  top: var(--header-h);
+  left: 0;
+  right: 0;
+  z-index: 199;
 }
 
 .breadcrumb a { color: var(--color-primary); text-decoration: none; }
@@ -79,10 +119,19 @@ body {
 .breadcrumb .sep { color: var(--color-border); }
 
 /* ── Layout ──────────────────────────────────────────── */
+/* Default offset clears the fixed header only (index, pages without breadcrumb) */
 .main-content {
   max-width: 1100px;
-  margin: 32px auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: calc(var(--header-h) + 32px);
+  margin-bottom: calc(var(--footer-h) + 24px);
   padding: 0 24px;
+}
+
+/* When a breadcrumb is present, add its height to the top offset */
+body.has-breadcrumb .main-content {
+  margin-top: calc(var(--header-h) + var(--breadcrumb-h) + 32px);
 }
 
 /* ── Report page ─────────────────────────────────────── */
@@ -219,12 +268,20 @@ body {
 
 /* ── Footer ──────────────────────────────────────────── */
 .site-footer {
-  text-align: center;
-  padding: 24px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--footer-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
   font-size: 12px;
   color: var(--color-muted);
+  background: var(--color-surface);
   border-top: 1px solid var(--color-border);
-  margin-top: 48px;
+  z-index: 198;
 }
 
 /* ── Translations table ──────────────────────────────── */
@@ -288,3 +345,71 @@ body {
 .null-value { color: var(--color-muted); font-style: italic; font-family: var(--font-sans); }
 .bool-true  { color: #065f46; }
 .bool-false { color: #991b1b; }
+
+/* ── Print ───────────────────────────────────────────── */
+@media print {
+  /* Reserve page margins so fixed header/footer don't overlap content */
+  @page {
+    margin-top: 18mm;
+    margin-bottom: 14mm;
+    margin-left: 12mm;
+    margin-right: 12mm;
+  }
+
+  /* Header and footer stay fixed — browsers repeat them on every printed page */
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    box-shadow: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .site-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid var(--color-border);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Breadcrumb flows normally — appears once after the first page header */
+  .breadcrumb {
+    position: static;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* Reset screen-specific top offset; @page margins handle the space */
+  .main-content,
+  body.has-breadcrumb .main-content {
+    margin-top: 0;
+    margin-bottom: 0;
+    max-width: 100%;
+    padding: 0;
+  }
+
+  /* Keep sections whole — avoid splitting a section across pages */
+  .section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Let detail table rows break across pages normally */
+  .detail-table tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Suppress hover shadows in print */
+  .entry-list li:hover { box-shadow: none; }
+
+  /* Ensure colors print correctly */
+  .tag, .report-type-badge, .environment-badge {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

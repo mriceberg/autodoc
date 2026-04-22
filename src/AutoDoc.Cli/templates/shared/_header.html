@@ -6,11 +6,18 @@
   <title>{{ page_title }} — AutoDoc</title>
   <link rel="stylesheet" href="{{ relative_path_to_root }}shared/styles.css">
 </head>
-<body>
+<body{{- if breadcrumbs && breadcrumbs.size > 0 }} class="has-breadcrumb"{{- end }}>
 
 <header class="site-header">
-  <a class="logo" href="{{ relative_path_to_root }}index.html">AutoDoc</a>
-  <span class="environment-badge">{{ environment_name }}</span>
+  <div class="header-left">
+    <a class="logo" href="{{ relative_path_to_root }}index.html">AutoDoc</a>
+    {{- if report_type }}
+    <span class="report-type-badge">{{ report_type }}</span>
+    {{- end }}
+  </div>
+  <div class="header-right">
+    <span class="environment-badge">{{ environment_name }}</span>
+  </div>
 </header>
 
 {{- if breadcrumbs && breadcrumbs.size > 0 }}
