@@ -78,21 +78,23 @@ body {
 }
 
 .header-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 3fr 1fr;
   align-items: baseline;
   gap: 8px;
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 100%;
+  width: 100%;
+  min-width: 0;
 }
 
 .header-long-text {
   font-size: 11px;
   color: rgba(255,255,255,.65);
   font-family: var(--font-sans);
+  text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
 }
 
 .header-short-text {
@@ -100,9 +102,11 @@ body {
   font-size: 14px;
   font-weight: 600;
   color: #fff;
-  white-space: nowrap;
+  text-align: right;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 /* Right column: client logo */
