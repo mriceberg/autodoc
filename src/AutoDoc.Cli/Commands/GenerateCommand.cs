@@ -43,23 +43,30 @@ public static class GenerateCommand
                          "1036 for French). Defaults to 0 which uses the Dataverse default label.");
         languageOption.AddAlias("-l");
 
+        var companyLogoOption = new Option<string?>(
+            name: "--company-logo",
+            description: "Path to the company logo image file (PNG, SVG, etc.) displayed in the " +
+                         "report header left column. Optional.");
+
         var cmd = new Command("generate", "Generate documentation for a Power Platform environment");
         cmd.AddOption(envOption);
         cmd.AddOption(formatOption);
         cmd.AddOption(outputOption);
         cmd.AddOption(secretsOption);
         cmd.AddOption(languageOption);
+        cmd.AddOption(companyLogoOption);
 
-        cmd.SetHandler(async (env, format, output, secretsPath, language) =>
+        cmd.SetHandler(async (env, format, output, secretsPath, language, companyLogo) =>
         {
-            await RunAsync(env, format, output, secretsPath, language);
-        }, envOption, formatOption, outputOption, secretsOption, languageOption);
+            await RunAsync(env, format, output, secretsPath, language, companyLogo);
+        }, envOption, formatOption, outputOption, secretsOption, languageOption, companyLogoOption);
 
         return cmd;
     }
 
     private static async Task RunAsync(
-        string environmentName, string format, string outputDir, string secretsPath, int languageCode)
+        string environmentName, string format, string outputDir, string secretsPath,
+        int languageCode, string? companyLogoPath)
     {
         Console.WriteLine($"AutoDoc — generating documentation for environment: {environmentName}");
         if (languageCode > 0)
@@ -73,6 +80,16 @@ public static class GenerateCommand
             throw new InvalidOperationException(
                 $"Environment '{environmentName}' has no Dataverse configuration.");
 
+        // Resolve logo paths: company logo from CLI, client logo from secrets
+        var clientLogoPath = env.ClientLogoPath;
+
+        // Derive filenames for use in templates (null when no logo)
+        var companyLogoFilename = ResolveLogoFilename(companyLogoPath);
+        var clientLogoFilename  = ResolveLogoFilename(clientLogoPath);
+
+        if (companyLogoFilename is not null) Console.WriteLine($"  Company logo: {companyLogoPath}");
+        if (clientLogoFilename  is not null) Console.WriteLine($"  Client logo:  {clientLogoPath}");
+
         // Build auth + HTTP client
         var auth = AuthProviderFactory.Create(env.Dataverse.Auth);
         var http = new HttpClient();
@@ -82,7 +99,9 @@ public static class GenerateCommand
         var renderOptions = Options.Create(new RenderOptions
         {
             TemplatesDirectory = ResolveTemplatesDir(),
-            OutputDirectory    = outputDir
+            OutputDirectory    = outputDir,
+            CompanyLogoPath    = companyLogoPath,
+            ClientLogoPath     = clientLogoPath
         });
 
         IRenderer renderer = format.ToLowerInvariant() switch
@@ -94,9 +113,11 @@ public static class GenerateCommand
 
         var baseContext = new RenderContext
         {
-            EnvironmentName = environmentName,
-            GeneratedAt     = DateTime.UtcNow,
-            LanguageCode    = languageCode
+            EnvironmentName      = environmentName,
+            GeneratedAt          = DateTime.UtcNow,
+            LanguageCode         = languageCode,
+            CompanyLogoFilename  = companyLogoFilename,
+            ClientLogoFilename   = clientLogoFilename
         };
 
         var reportEntries = new List<ReportEntry>();
@@ -196,6 +217,18 @@ public static class GenerateCommand
         Console.WriteLine(" done.");
 
         Console.WriteLine($"\nDocumentation written to: {Path.GetFullPath(outputDir)}");
+    }
+
+    /// Returns the bare file name when the path points to an existing file, otherwise null.
+    private static string? ResolveLogoFilename(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return null;
+        if (!File.Exists(path))
+        {
+            Console.WriteLine($"  Warning: logo file not found: {path}");
+            return null;
+        }
+        return Path.GetFileName(path);
     }
 
     private static string Slugify(string value) =>

@@ -21,6 +21,12 @@ public class EnvironmentSecrets
 
     [JsonPropertyName("projectOnline")]
     public DataverseSecrets? ProjectOnline { get; set; }
+
+    /// <summary>
+    /// Path to the client logo image file (PNG, SVG, etc.) to display in the report header.
+    /// </summary>
+    [JsonPropertyName("clientLogoPath")]
+    public string? ClientLogoPath { get; set; }
 }
 
 public class DataverseSecrets

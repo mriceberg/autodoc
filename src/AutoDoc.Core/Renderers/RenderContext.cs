@@ -13,6 +13,18 @@ public record RenderContext
     /// 0 means use the default label from each LabelField.
     /// </summary>
     public int LanguageCode { get; set; } = 0;
+
+    /// <summary>
+    /// File name (no path) of the company logo, relative to output/shared/.
+    /// Null when no logo was configured.
+    /// </summary>
+    public string? CompanyLogoFilename { get; set; }
+
+    /// <summary>
+    /// File name (no path) of the client logo, relative to output/shared/.
+    /// Null when no logo was configured.
+    /// </summary>
+    public string? ClientLogoFilename { get; set; }
 }
 
 public record BreadcrumbItem(string Label, string? Url = null);

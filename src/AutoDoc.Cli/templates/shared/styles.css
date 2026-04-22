@@ -22,7 +22,7 @@
   --shadow:           0 1px 3px rgba(0,0,0,.10), 0 1px 2px rgba(0,0,0,.06);
 
   /* Layout heights — used by both screen and print rules */
-  --header-h:     52px;
+  --header-h:     72px;
   --breadcrumb-h: 37px;
   --footer-h:     40px;
 }
@@ -35,65 +35,87 @@ body {
   background: var(--color-bg);
 }
 
-/* ── Header ─────────────────────────────────────────── */
+/* ── Header — 3-column grid ──────────────────────────── */
 .site-header {
   background: var(--color-primary);
   color: #fff;
-  padding: 0 24px;
+  padding: 0 20px;
   height: var(--header-h);
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
+  gap: 16px;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 200;
-  box-shadow: 0 2px 4px rgba(0,0,0,.15);
+  box-shadow: 0 2px 4px rgba(0,0,0,.18);
 }
 
-.header-left {
+/* Left column: company logo */
+.header-logo-company {
   display: flex;
   align-items: center;
-  gap: 12px;
+  flex-shrink: 0;
 }
 
-.header-right {
+.header-logo-company img {
+  max-height: 44px;
+  max-width: 160px;
+  object-fit: contain;
+}
+
+/* Center column: stacked rows */
+.header-center {
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 2px;
+  overflow: hidden;
+  min-width: 0;
 }
 
-.site-header .logo {
-  font-family: var(--font-title);
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  text-decoration: none;
-  letter-spacing: -.3px;
+.header-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
   white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
 }
 
-.site-header .report-type-badge {
-  font-family: var(--font-title);
+.header-long-text {
   font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .7px;
-  color: rgba(255,255,255,.90);
-  background: rgba(255,255,255,.18);
-  border: 1px solid rgba(255,255,255,.25);
-  border-radius: 4px;
-  padding: 3px 9px;
+  color: rgba(255,255,255,.65);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.site-header .environment-badge {
-  font-size: 12px;
-  background: rgba(255,255,255,.20);
-  border-radius: 20px;
-  padding: 2px 10px;
-  font-weight: 500;
+.header-short-text {
+  font-family: var(--font-title);
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Right column: client logo */
+.header-logo-client {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.header-logo-client img {
+  max-height: 44px;
+  max-width: 160px;
+  object-fit: contain;
 }
 
 /* ── Breadcrumb ──────────────────────────────────────── */
@@ -407,8 +429,10 @@ body.has-breadcrumb .main-content {
   /* Suppress hover shadows in print */
   .entry-list li:hover { box-shadow: none; }
 
-  /* Ensure colors print correctly */
-  .tag, .report-type-badge, .environment-badge {
+  /* Ensure colors and logo images print correctly */
+  .tag,
+  .header-logo-company img,
+  .header-logo-client img {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }

@@ -9,15 +9,37 @@
 <body{{- if breadcrumbs && breadcrumbs.size > 0 }} class="has-breadcrumb"{{- end }}>
 
 <header class="site-header">
-  <div class="header-left">
-    <a class="logo" href="{{ relative_path_to_root }}index.html">AutoDoc</a>
-    {{- if report_type }}
-    <span class="report-type-badge">{{ report_type }}</span>
+
+  {{- # Left column: company logo -}}
+  <div class="header-logo-company">
+    {{- if company_logo_filename && company_logo_filename != "" }}
+    <a href="{{ relative_path_to_root }}index.html">
+      <img src="{{ relative_path_to_root }}shared/{{ company_logo_filename }}" alt="Company logo">
+    </a>
     {{- end }}
   </div>
-  <div class="header-right">
-    <span class="environment-badge">{{ environment_name }}</span>
+
+  {{- # Center column: rows defined per template via header_rows -}}
+  <div class="header-center">
+    {{- if header_rows && header_rows.size > 0 }}
+      {{- for row in header_rows }}
+    <div class="header-row">
+      <span class="header-long-text">{{ row.long_text }}</span>
+      {{- if row.short_text && row.short_text != "" }}
+      <span class="header-short-text">{{ row.short_text }}</span>
+      {{- end }}
+    </div>
+      {{- end }}
+    {{- end }}
   </div>
+
+  {{- # Right column: client logo -}}
+  <div class="header-logo-client">
+    {{- if client_logo_filename && client_logo_filename != "" }}
+    <img src="{{ relative_path_to_root }}shared/{{ client_logo_filename }}" alt="Client logo">
+    {{- end }}
+  </div>
+
 </header>
 
 {{- if breadcrumbs && breadcrumbs.size > 0 }}
